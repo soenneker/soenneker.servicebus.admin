@@ -31,4 +31,16 @@ public class ServiceBusAdminUtil : IServiceBusAdminUtil
     {
         return _client.Get();
     }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        _client.Dispose();
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        GC.SuppressFinalize(this);
+        return _client.DisposeAsync();
+    }
 }
