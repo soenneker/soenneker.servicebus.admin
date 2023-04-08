@@ -12,7 +12,7 @@ public static class ServiceBusAdminUtilRegistrar
     /// <summary>
     /// As Singleton
     /// </summary>
-    public static void AddBlobClientUtil(this IServiceCollection services)
+    public static void AddServiceBusAdminUtil(this IServiceCollection services)
     {
         services.TryAddSingleton<IServiceBusAdminUtil, ServiceBusAdminUtil>();
     }
