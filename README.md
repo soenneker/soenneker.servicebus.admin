@@ -8,5 +8,5 @@
 ## Installation
 
 ```
-Install-Package Soenneker.ServiceBus.Admin
+dotnet add package Soenneker.ServiceBus.Admin
 ```
