@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.Contracts;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus.Administration;
 
@@ -11,9 +12,6 @@ namespace Soenneker.ServiceBus.Admin.Abstract;
 /// </summary>
 public interface IServiceBusAdminUtil : IDisposable, IAsyncDisposable
 {
-    /// <summary>
-    /// Lets try to pass all service bus traffic over this one client
-    /// </summary>
     [Pure]
-    ValueTask<ServiceBusAdministrationClient> GetClient();
+    ValueTask<ServiceBusAdministrationClient> Get(CancellationToken cancellationToken = default);
 }
