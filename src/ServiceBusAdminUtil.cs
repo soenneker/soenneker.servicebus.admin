@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Soenneker.Extensions.Configuration;
 using Soenneker.ServiceBus.Admin.Abstract;
 using Soenneker.Utils.AsyncSingleton;
@@ -14,15 +15,15 @@ public class ServiceBusAdminUtil : IServiceBusAdminUtil
 {
     private readonly AsyncSingleton<ServiceBusAdministrationClient> _client;
 
-    public ServiceBusAdminUtil(IConfiguration config)
+    public ServiceBusAdminUtil(IConfiguration config, ILogger<ServiceBusAdminUtil> logger)
     {
         _client = new AsyncSingleton<ServiceBusAdministrationClient>(() =>
         {
             var connectionString = config.GetValueStrict<string>("Azure:ServiceBus:ConnectionString");
 
-            var client = new ServiceBusAdministrationClient(connectionString);
+            logger.LogDebug("Initializing ServiceBus Administration Client...");
 
-            return client;
+            return new ServiceBusAdministrationClient(connectionString);
         });
     }
 
