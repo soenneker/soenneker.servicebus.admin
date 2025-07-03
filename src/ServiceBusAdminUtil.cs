@@ -11,7 +11,7 @@ using Soenneker.Utils.AsyncSingleton;
 namespace Soenneker.ServiceBus.Admin;
 
 ///<inheritdoc cref="IServiceBusAdminUtil"/>
-public class ServiceBusAdminUtil : IServiceBusAdminUtil
+public sealed class ServiceBusAdminUtil : IServiceBusAdminUtil
 {
     private readonly AsyncSingleton<ServiceBusAdministrationClient> _client;
 
@@ -34,13 +34,11 @@ public class ServiceBusAdminUtil : IServiceBusAdminUtil
 
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
         _client.Dispose();
     }
 
     public ValueTask DisposeAsync()
     {
-        GC.SuppressFinalize(this);
         return _client.DisposeAsync();
     }
 }
