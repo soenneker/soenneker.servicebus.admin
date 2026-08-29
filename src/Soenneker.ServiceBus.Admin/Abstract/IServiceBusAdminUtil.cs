@@ -13,10 +13,10 @@ namespace Soenneker.ServiceBus.Admin.Abstract;
 public interface IServiceBusAdminUtil : IDisposable, IAsyncDisposable
 {
     /// <summary>
-    /// Gets the value.
+    /// Returns the configured service Bus Administration Client used by the Service Bus Admin.
     /// </summary>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task containing the result of the operation.</returns>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>A task whose result is the requested service Bus Administration Client.</returns>
     [Pure]
     ValueTask<ServiceBusAdministrationClient> Get(CancellationToken cancellationToken = default);
 }
