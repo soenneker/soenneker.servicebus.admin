@@ -9,7 +9,7 @@ using Soenneker.Utils.AsyncSingleton;
 
 namespace Soenneker.ServiceBus.Admin;
 
-///<inheritdoc cref="IServiceBusAdminUtil"/>
+/// <inheritdoc cref="IServiceBusAdminUtil"/>
 public sealed class ServiceBusAdminUtil : IServiceBusAdminUtil
 {
     private readonly ILogger<ServiceBusAdminUtil> _logger;
