@@ -5,39 +5,70 @@
 
 # Soenneker.ServiceBus.Admin
 
-A utility library for Azure Service Bus Administration client accessibility Singleton IoC.
+A lazily initialized, dependency-injection-friendly `ServiceBusAdministrationClient` for Azure Service Bus entity management.
 
-## Install
+## Installation
 
 ```bash
 dotnet add package Soenneker.ServiceBus.Admin
 ```
 
-## Quick start
+## Configuration
+
+Provide the Service Bus connection string at `Azure:ServiceBus:ConnectionString`:
+
+```json
+{
+  "Azure": {
+    "ServiceBus": {
+      "ConnectionString": "Endpoint=sb://..."
+    }
+  }
+}
+```
+
+Keep the connection string in a protected configuration provider rather than source control or client-visible configuration. Its credential must allow the administration operations your application performs.
+
+## Registration
 
 ```csharp
 using Soenneker.ServiceBus.Admin.Registrars;
-using Microsoft.Extensions.DependencyInjection;
 
-var services = new ServiceCollection();
-var result = services.AddServiceBusAdminUtilAsSingleton();
+services.AddServiceBusAdminUtilAsSingleton();
 ```
 
-Registers Service Bus Admin Util with a singleton lifetime.
+The client is created on the first `Get` call and reused until the service is disposed.
 
-## What you get
+`AddServiceBusAdminUtilAsScoped()` exists, but this package's implementation currently registers the service as a singleton as well. Use `AddServiceBusAdminUtilAsSingleton()` when you want the lifetime to be unambiguous.
 
-- `IServiceBusAdminUtil` — A utility library for Azure Service Bus Administration client accessibility Singleton IoC.
-- `ServiceBusAdminUtilRegistrar` — A utility library for Azure Service Bus Administration client accessibility.
+## Usage
 
-## API at a glance
+Inject `IServiceBusAdminUtil`, obtain the Azure SDK client, and use its administration APIs directly:
 
-| API | What it does | Result / important behavior |
-| --- | --- | --- |
-| `ServiceBusAdminUtilRegistrar.AddServiceBusAdminUtilAsSingleton(services)` | Registers Service Bus Admin Util with a singleton lifetime. | The same service collection, so additional registrations can be chained. |
-| `ServiceBusAdminUtilRegistrar.AddServiceBusAdminUtilAsScoped(services)` | Registers Service Bus Admin Util with a scoped lifetime. | The same service collection, so additional registrations can be chained. |
+```csharp
+using Azure.Messaging.ServiceBus.Administration;
+using Soenneker.ServiceBus.Admin.Abstract;
 
-## Practical notes
+public sealed class QueueProvisioner(IServiceBusAdminUtil adminUtil)
+{
+    public async Task EnsureQueue(CancellationToken cancellationToken)
+    {
+        ServiceBusAdministrationClient admin =
+            await adminUtil.Get(cancellationToken);
 
-- Calls that return a cached or singleton value reuse the same instance until the owning service is disposed.
-- Dispose instances you own when their scope ends so held resources can be released.
+        if (!(await admin.QueueExistsAsync("orders", cancellationToken)).Value)
+        {
+            await admin.CreateQueueAsync(
+                new CreateQueueOptions("orders")
+                {
+                    MaxDeliveryCount = 10
+                },
+                cancellationToken);
+        }
+    }
+}
+```
+
+The utility does not create queues, topics, subscriptions, or rules automatically. It only owns and reuses the configured administration client.
+
+The Azure SDK client is safe to reuse. Do not dispose the object returned by `Get`; its lifetime belongs to `IServiceBusAdminUtil` and the DI container.

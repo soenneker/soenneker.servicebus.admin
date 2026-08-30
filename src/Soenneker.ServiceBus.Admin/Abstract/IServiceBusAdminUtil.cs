@@ -7,13 +7,12 @@ using Azure.Messaging.ServiceBus.Administration;
 namespace Soenneker.ServiceBus.Admin.Abstract;
 
 /// <summary>
-/// A utility library for Azure Service Bus Administration client accessibility <para/>
-/// Singleton IoC
+/// Provides lazy access to a shared Azure Service Bus administration client configured from <c>Azure:ServiceBus:ConnectionString</c>.
 /// </summary>
 public interface IServiceBusAdminUtil : IDisposable, IAsyncDisposable
 {
     /// <summary>
-    /// Returns the configured service Bus Administration Client used by the Service Bus Admin.
+    /// Gets the lazily initialized administration client. The returned client is owned by this service and should not be disposed by the caller.
     /// </summary>
     /// <param name="cancellationToken">Token used to cancel the operation.</param>
     /// <returns>A task whose result is the requested service Bus Administration Client.</returns>
