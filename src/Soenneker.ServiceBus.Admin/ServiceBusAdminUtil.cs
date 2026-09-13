@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +9,6 @@ using Soenneker.Utils.AsyncSingleton;
 
 namespace Soenneker.ServiceBus.Admin;
 
-/// <inheritdoc cref="IServiceBusAdminUtil"/>
 public sealed class ServiceBusAdminUtil : IServiceBusAdminUtil
 {
     private readonly ILogger<ServiceBusAdminUtil> _logger;
@@ -34,15 +33,6 @@ public sealed class ServiceBusAdminUtil : IServiceBusAdminUtil
 
     public ValueTask<ServiceBusAdministrationClient> Get(CancellationToken cancellationToken = default) =>
         _client.Get(cancellationToken);
-
-    /// <summary>
-    /// Releases resources used by the current instance.
-    /// </summary>
     public void Dispose() => _client.Dispose();
-
-    /// <summary>
-    /// Asynchronously releases resources used by the current instance.
-    /// </summary>
-    /// <returns>A task that represents the asynchronous operation.</returns>
     public ValueTask DisposeAsync() => _client.DisposeAsync();
 }
